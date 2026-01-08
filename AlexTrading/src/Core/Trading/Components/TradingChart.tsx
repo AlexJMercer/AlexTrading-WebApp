@@ -42,16 +42,16 @@ export const TradingChart = ({ data, trades }: Properties) => {
             position:   t.type === 'buy' ? 'belowBar' : 'aboveBar',
             color:      t.type === 'buy' ? '#29e96f' : '#e72e2f',
             shape:      t.type === 'buy' ? 'arrowUp' : 'arrowDown',
-            text:       t.type.toUpperCase(),
+            text:       t.type.toUpperCase() + " @ " + t.price.toFixed(2).toString(),
         }));
 
         createSeriesMarkers(candleStickSeries, seriesMarkers);
 
-        // chart.timeScale().fitContent();
+        chart.timeScale().fitContent();
 
         return () => chart.remove();
 
     }, [data, trades]);
 
-    return <div ref={chartContainerRef} className="w-full h-[500px]" />
+    return <div ref={chartContainerRef} className="w-full h-screen" />
 };
