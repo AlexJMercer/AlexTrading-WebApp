@@ -41,7 +41,7 @@ export default function PerformanceCard({ statistics, unrealizedPnl }) {
                             <TableCell className="text-zinc-200 py-3">
                                 Total PnL
                             </TableCell>
-                            <TableCell className={`text-right font-mono ${ statistics.pnl >= 0 ? "text-green-500" : "text-red-500"}` }>
+                            <TableCell className={`text-right font-mono ${ statistics.pnl >= 0 ? "text-green-400" : "text-red-400"}` }>
                                 { statistics.pnl >= 0 ? '+' : '' }${ statistics.pnl.toFixed(2) }
                             </TableCell>
                         </TableRow>

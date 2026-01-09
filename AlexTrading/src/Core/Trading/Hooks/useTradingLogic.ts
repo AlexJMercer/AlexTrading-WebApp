@@ -92,7 +92,7 @@ export const useTradingLogic = (currentPrice: number) => {
 
         const winRate = closedCount > 0 ? (wins / closedCount) * 100 : 0;
 
-        // Collect profits for closed trades
+        // Accumulate profits for closed trades
         const profits: number[] = [];
         const tempBuys: Trade[] = [];
         const tempSells: Trade[] = [];
