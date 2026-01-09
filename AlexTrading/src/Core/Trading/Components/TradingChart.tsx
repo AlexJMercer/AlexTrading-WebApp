@@ -19,10 +19,10 @@ export const TradingChart = ({ data, trades }: Properties) => {
         if (!chartContainerRef.current) return;
 
         const chart = createChart(chartContainerRef.current, {
-            layout: { background: { type: ColorType.Solid, color: '#222222' }, textColor: '#a1a1a1' },
+            layout: { background: { type: ColorType.Solid, color: '#111' }, textColor: '#eee' },
             width: chartContainerRef.current.clientWidth,
             height: chartContainerRef.current.clientHeight,
-            grid: { vertLines: { color: '#272727' }, horzLines: { color: '#272727' } },
+            grid: { vertLines: { color: '#181818' }, horzLines: { color: '#181818' } },
         });
 
         const candleStickSeries = chart.addSeries(CandlestickSeries, {
@@ -53,5 +53,5 @@ export const TradingChart = ({ data, trades }: Properties) => {
 
     }, [data, trades]);
 
-    return <div ref={chartContainerRef} className="w-full h-screen" />
+    return <div ref={chartContainerRef} className="w-full h-full" />
 };
