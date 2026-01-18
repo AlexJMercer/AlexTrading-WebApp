@@ -1,59 +1,41 @@
-import { useState, useEffect, useMemo } from "react";
-import { useTradingLogic } from "./useTradingLogic";
+import { useEffect, useRef } from "react";
 
-export const EMAStrategy = ( latestData, openBuys, openSells, currPrice, currTime, executeTrade ) => {
 
-    const [slidingEMABuffer, setSlidingEMABuffer] = useState<any[]>([]);
-    const [EMAList, setEMAList] = useState<any[]>([]);
+
+export const EMAStrategy = ( openBuys, openSells, currPrice, currTime, executeTrade ) => {
+
+    const priceBuffer = useRef<number[]>([]);
+    const EMAPrev = useRef<number | null>(null);
     
     useEffect(() => {
 
-        setSlidingEMABuffer((prev) => [...prev, latestData]);
-        setEMAList((prev) => [...prev, () => {
-            if (EMAList.length < 3) 
-            {
-                EMAList.push(latestData.price);
-                return;
-            }
-
-            calculateEMA();
-        }]);
-
-        doBacktest();
-    });
-
-
-    const calculateEMA = () => {
-        // const multiplier = 0.5;
-        
-        const EMA1 = EMAList[EMAList.length - 1];
-        const EMA2 = EMAList[EMAList.length - 2];
-        const EMA3 = EMAList[EMAList.length - 3];
-
-        const currEMA = (3 * EMA1) - (3 * EMA2) + EMA3;
-
-        console.log(currEMA);
-
-        return currEMA;
-    }
-
-
-
-    const doBacktest = () => {
-        if (openBuys.length > 0) {
-            if (latestData.price < EMAList[EMAList.length - 1]) {
-                // sell order
-                executeTrade('sell', currPrice, currTime);
-            }
-        }
-        
-        if (openSells.length > 0) {
-            if (latestData.price > EMAList[EMAList.length - 1]) {
-                // buy order
-                executeTrade('buy', currPrice, currTime);
-            }
+        priceBuffer.current.push(currPrice);
+        if (priceBuffer.current.length > 3) 
+        {
+            priceBuffer.current.shift();
         }
             
-    }
+        if (priceBuffer.current.length < 3) return;
+
+        if (EMAPrev.current === null) {
+            EMAPrev.current = priceBuffer.current.reduce((a, b) => a + b, 0) / 3;
+            return;
+        }
     
+        const multiplier = 0.5;
+        const EMA = currPrice * multiplier + EMAPrev.current * (1 - multiplier); 
+    
+        if (openBuys.length > 0 && currPrice < EMA) {
+            // sell order
+            executeTrade('sell', currPrice, currTime);
+        }
+    
+        if (openSells.length > 0 && currPrice > EMA) {
+            // buy order
+            executeTrade('buy', currPrice, currTime);
+        }
+        
+        EMAPrev.current = EMA;
+
+    }, [openBuys, openSells, currPrice, currTime, executeTrade]);
 }
